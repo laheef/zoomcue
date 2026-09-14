@@ -215,6 +215,21 @@ Reads the target site's cookies and localStorage only after confirming it is not
 
 For Chrome Web Store publishing, update `extension/manifest.json`, add store icons, set the production app origin in `content_scripts.matches`, and upload the extension from the Chrome Developer Dashboard.
 
+### Extension download
+
+Download the packaged extension from the project releases:
+
+- [Download ZoomCue Chrome extension v0.1.0](releases/zoomcue-extension-v0.1.0.zip)
+
+To install the ZIP locally, download it, extract it, then choose the extracted folder in `chrome://extensions` → **Developer mode** → **Load unpacked**. Chrome does not load a ZIP directly through **Load unpacked**.
+
+## Release downloads
+
+The current release assets are listed here:
+
+- [ZoomCue Chrome extension v0.1.0](releases/zoomcue-extension-v0.1.0.zip)
+- [GitHub Releases](https://github.com/laheef/zoomcue/releases)
+
 ## Vercel deployment
 
 Vercel is used for the ZoomCue web/API layer. Do **not** run Playwright, FFmpeg, Remotion, or a persistent BullMQ worker inside a Vercel function: serverless functions are short-lived and do not provide a durable worker process. Deploy the web layer to Vercel and deploy the worker separately to a container/VPS platform.
