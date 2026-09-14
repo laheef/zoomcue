@@ -10,6 +10,26 @@ ZoomCue is an AI walkthrough generator: provide a URL and a brief, then the plat
 ### Transparent pipeline audit
 ![Pipeline audit screen](docs/screenshots/audit-pipeline.svg)
 
+### Script review
+![Script review screen](docs/screenshots/script-review.svg)
+
+### Narration
+![Narration screen](docs/screenshots/narration.svg)
+
+### Camera audit
+![Camera audit screen](docs/screenshots/camera-audit.svg)
+
+### Final video
+![Video ready screen](docs/screenshots/video-ready.svg)
+
+### Product flow animation
+
+[Download the ZoomCue flow video](docs/zoomcue-flow.mp4)
+
+![ZoomCue flow animation](docs/zoomcue-flow.svg)
+
+The flow covers: Explore → Write → Dry-run → Narrate → Audit → Render. The production render worker creates the downloadable MP4 through Remotion and FFmpeg.
+
 The UI prototype can be started with the zero-dependency preview server:
 
 ```bash

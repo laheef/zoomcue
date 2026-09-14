@@ -18,3 +18,5 @@ storage/
 
 .cache/
 .venv/
+.npm/
+!docs/zoomcue-flow.mp4
