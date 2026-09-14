@@ -219,7 +219,8 @@ For Chrome Web Store publishing, update `extension/manifest.json`, add store ico
 
 Download the packaged extension from the project releases:
 
-- [Download ZoomCue Chrome extension v0.1.0](releases/zoomcue-extension-v0.1.0.zip)
+- [Download ZoomCue Chrome extension v0.1.0](https://github.com/laheef/zoomcue/releases/download/v0.1.0/zoomcue-extension-v0.1.0.zip)
+- [Repository copy of the extension ZIP](releases/zoomcue-extension-v0.1.0.zip)
 
 To install the ZIP locally, download it, extract it, then choose the extracted folder in `chrome://extensions` → **Developer mode** → **Load unpacked**. Chrome does not load a ZIP directly through **Load unpacked**.
 
