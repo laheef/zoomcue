@@ -215,67 +215,222 @@ Reads the target site's cookies and localStorage only after confirming it is not
 
 For Chrome Web Store publishing, update `extension/manifest.json`, add store icons, set the production app origin in `content_scripts.matches`, and upload the extension from the Chrome Developer Dashboard.
 
-## Hostinger deployment
+## Vercel deployment
 
-Hostinger's Node.js application feature can host the web process if the plan allows persistent Node processes. The full pipeline also needs long-running worker processes and Chromium/FFmpeg support.
+Vercel is used for the ZoomCue web/API layer. Do **not** run Playwright, FFmpeg, Remotion, or a persistent BullMQ worker inside a Vercel function: serverless functions are short-lived and do not provide a durable worker process. Deploy the web layer to Vercel and deploy the worker separately to a container/VPS platform.
 
-### Recommended process layout
+### What runs where
 
 ```text
-Node app 1: web/API server
-Node app 2: pipeline worker
-Node app 3: render worker
+Vercel
+  Web UI, authentication, provider settings, API routes
+
+Managed MySQL
+  Users, videos, scripts, jobs, metadata
+
+Upstash Redis or Redis Cloud
+  BullMQ queue and job events
+
+Railway / Render / Fly.io / VPS worker
+  Playwright, TTS, camera audit, Remotion, FFmpeg
+
+Cloudflare R2
+  MP4, audio, screenshots, page snapshots, SRT/VTT
 ```
 
-Keep Redis and R2 external if Hostinger does not provide them.
+### 1. Prepare the repository
 
-### Hostinger steps
+```bash
+git clone https://github.com/laheef/zoomcue.git
+cd zoomcue
+npm ci
+npm run migrate
+```
 
-1. Create a MySQL database and user in hPanel.
-2. Create a Redis database externally if Redis is not available in hPanel.
-3. Create a Cloudflare R2 bucket and access key with only the required bucket permissions.
-4. Upload the repository or deploy it from Git.
-5. Set the Node.js application root to the repository directory.
-6. Set the Node.js version to 20 or newer.
-7. Run:
+The repository includes `vercel.json` and `api/index.js` for the Vercel web/API entrypoint.
+
+### 2. Create the Vercel project
+
+1. Sign in at https://vercel.com.
+2. Click **Add New → Project**.
+3. Import `laheef/zoomcue` from GitHub.
+4. Choose the repository root as the project root.
+5. Keep the framework as **Other**.
+6. Deploy once so Vercel creates the project.
+7. Add the production domain:
+
+   ```text
+   digital360.store
+   ```
+
+8. In your DNS provider, add the records Vercel shows. Usually this is an A record for the apex domain and a CNAME for `www`.
+9. Wait for Vercel SSL to become active before enabling secure cookies.
+
+### 3. Add Vercel environment variables
+
+In **Vercel → Project → Settings → Environment Variables**, add these to Production, Preview, and Development as appropriate:
+
+```env
+NODE_ENV=production
+VERCEL=1
+APP_URL=https://digital360.store
+PORT=3000
+COOKIE_SECURE=true
+CORS_ORIGINS=https://digital360.store
+
+JWT_SECRET=<long-random-value-at-least-32-characters>
+DATA_ENCRYPTION_KEY=<64-lowercase-hex-characters>
+
+MYSQL_HOST=<managed-mysql-host>
+MYSQL_PORT=3306
+MYSQL_DATABASE=zoomcue
+MYSQL_USER=<mysql-user>
+MYSQL_PASSWORD=<mysql-password>
+
+REDIS_URL=rediss://<redis-user>:<redis-password>@<redis-host>:6380
+
+R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
+R2_ACCESS_KEY_ID=<r2-access-key>
+R2_SECRET_ACCESS_KEY=<r2-secret>
+R2_BUCKET=zoomcue-assets
+```
+
+Generate secrets locally and paste the output into Vercel; never commit them:
+
+```bash
+openssl rand -hex 32
+openssl rand -base64 48
+```
+
+Redeploy after changing environment variables.
+
+### 4. Create managed MySQL
+
+Use a MySQL provider that allows remote TLS connections, for example PlanetScale, Aiven, Railway MySQL, DigitalOcean Managed MySQL, or another managed MySQL host.
+
+1. Create a MySQL 8 database named `zoomcue`.
+2. Create a dedicated application user.
+3. Grant only the required database permissions.
+4. Require TLS if your provider supports it.
+5. Copy the host, port, database, username, password, and CA/TLS requirements into Vercel variables.
+6. From a secure local shell, run:
 
    ```bash
-   npm ci --omit=dev
-   npm run migrate
+   MYSQL_HOST=... MYSQL_PORT=3306 MYSQL_DATABASE=zoomcue \
+   MYSQL_USER=... MYSQL_PASSWORD=... npm run migrate
    ```
 
-8. Add all `.env` values through the hosting environment settings, not a committed file.
-9. Set the web startup command to:
+7. Verify that tables and indexes from `schema.sql` exist.
+
+Do not expose MySQL directly to the browser. Only the Vercel API and worker should connect to it.
+
+### 5. Create Redis for BullMQ
+
+Use Upstash Redis, Redis Cloud, Railway Redis, or a managed Redis instance.
+
+1. Create a Redis database in the same region as the worker when possible.
+2. Enable TLS.
+3. Copy the `rediss://` connection URL.
+4. Add it as `REDIS_URL` in Vercel and the worker environment.
+5. Confirm the worker and web app use the same Redis URL.
+6. Never use an in-memory queue in production.
+
+BullMQ requires a Redis connection with `maxRetriesPerRequest: null`, which is already configured in `src/queue.js`.
+
+### 6. Create Cloudflare R2 storage
+
+1. Open Cloudflare Dashboard → R2.
+2. Create a bucket named `zoomcue-assets`.
+3. Create an R2 API token scoped only to that bucket.
+4. Copy the S3-compatible endpoint and credentials.
+5. Add the R2 variables to Vercel and the worker.
+6. Keep the bucket private. Generate short-lived signed download URLs from the API.
+
+Store large assets in R2, not Vercel's filesystem and not MySQL.
+
+### 7. Deploy the worker with Playwright and FFmpeg
+
+Vercel cannot safely run the persistent pipeline worker. Use Railway, Render, Fly.io, or a VPS with Docker.
+
+The repository includes `Dockerfile.worker`, which contains Chromium and its system dependencies:
+
+```bash
+docker build -f Dockerfile.worker -t zoomcue-worker .
+docker run --env-file .env zoomcue-worker
+```
+
+For Railway or Render:
+
+1. Create a new background worker service from the GitHub repository.
+2. Select Docker deployment.
+3. Set the Dockerfile to `Dockerfile.worker`.
+4. Set the start command to:
 
    ```bash
-   npm start
+   node src/pipeline-worker.js
    ```
 
-10. Start the pipeline and render workers as separate persistent applications if the plan supports them.
-11. Point `digital360.store` DNS to Hostinger and configure HTTPS.
-12. Set:
+5. Add the same MySQL, Redis, R2, encryption, and provider environment variables.
+6. Set worker concurrency conservatively, starting at `1` for browser/render jobs.
+7. Enable automatic restart on failure.
+8. Configure health/log monitoring.
 
-   ```env
-   APP_URL=https://digital360.store
-   CORS_ORIGINS=https://digital360.store
-   COOKIE_SECURE=true
-   ```
+The worker must have access to:
 
-13. Verify HTTPS redirects, secure cookies, login, provider key tests, video creation, queue progress, and download expiry before accepting users.
+- Chromium/Playwright
+- FFmpeg
+- Remotion dependencies
+- MySQL
+- Redis
+- R2
+- Provider APIs
 
-### Hostinger compatibility check
+### 8. Deploy the render worker
 
-Shared hosting can restrict the exact processes this product needs. Verify these items before production:
+For larger workloads, use a second worker service instead of making the browser worker render video:
 
-- Persistent Node worker processes
-- Redis outbound connections
-- Playwright Chromium installation and sandboxing
-- FFmpeg availability
-- WebSocket or polling support
-- Process restart behavior
-- Maximum execution time and memory
+```text
+pipeline worker: explore, script, dry-run, narrate, record, camera audit
+render worker: Remotion composition, FFmpeg, mux, R2 upload
+```
 
-If Chromium or FFmpeg cannot run on the plan, keep the web/API app on Hostinger and run pipeline/render workers on a small VPS or managed container service. The BullMQ architecture supports this split.
+Start the render service with the rendering worker command configured in the deployment platform. Keep render concurrency at `1` initially because 1080p60 rendering is CPU and memory intensive.
+
+### 9. Verify the production flow
+
+Run these checks in order:
+
+```text
+1. Open https://digital360.store
+2. Register a test account
+3. Log in and verify the secure session cookie
+4. Add a Deepgram or ElevenLabs key
+5. Test the provider connection
+6. Create a small 30-second video
+7. Confirm a BullMQ job appears in Redis
+8. Confirm the worker updates progress in MySQL
+9. Confirm screenshots/audio/MP4 upload to R2
+10. Confirm the final signed download URL expires
+11. Confirm the 3-day retention timestamp
+12. Test a failed provider call and retry behavior
+13. Test an invalid/private URL and confirm SSRF rejection
+14. Test an unauthenticated video lookup and confirm 401/404
+15. Test rate limits and CSRF protection
+```
+
+### Vercel limitations
+
+Do not place these inside a Vercel function:
+
+- Playwright browser sessions
+- Long page exploration
+- FFmpeg rendering
+- Remotion rendering
+- Large file generation
+- Durable queue consumers
+- In-memory job state
+
+Use Vercel only for short API requests and the web layer. Use the external worker for the long-running pipeline.
 
 ## Security checklist
 
