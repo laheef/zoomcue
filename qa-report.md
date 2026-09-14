@@ -1,4 +1,4 @@
-# Signal QA against Vibe Engineering Blocks
+# ZoomCue QA against Vibe Engineering Blocks
 
 ## Review scope
 Reviewed all 72 pages of `prompt engineering book.pdf` (47 blocks). The book emphasizes planning, locked dependencies, environment configuration, secret handling, modularity, SQL/data modeling/migrations/transactions/indexing/N+1, TLS, input validation, XSS, CSRF, CORS, SSRF, hashing, authentication, authorization, brute-force protection, timeouts, retries, circuit breakers, safe error handling, race conditions, background jobs, caching, rate limiting, pagination, error tracking, structured logs, testing, CI/CD, hosting, unified provider interfaces, Playwright, and reusable build rules.

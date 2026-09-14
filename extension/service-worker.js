@@ -1,10 +1,10 @@
-// Signal companion — the two jobs deliberately mirror the server pipeline.
+// ZoomCue companion — the two jobs deliberately mirror the server pipeline.
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (message.type === 'ssv:fetch-page') {
     try {
       const result = await chrome.scripting.executeScript({target: {tabId: message.tabId}, func: serializePage});
       const html = result?.[0]?.result;
-      if (html) await chrome.downloads.download({url: 'data:text/html;charset=utf-8,' + encodeURIComponent(html), filename: 'signal-page.html'});
+      if (html) await chrome.downloads.download({url: 'data:text/html;charset=utf-8,' + encodeURIComponent(html), filename: 'zoomcue-page.html'});
       sendResponse({ok: !!html, html});
     } catch (e) { sendResponse({ok: false, error: String(e)}); }
     return true;

@@ -1,7 +1,7 @@
-# Signal build rules
+# ZoomCue build rules
 
 ## Scope
-Signal is a Node.js 20 + MySQL application. The web process owns HTTP/auth/API boundaries. Long-running browser, narration, audit, and rendering work belongs in worker processes.
+ZoomCue is a Node.js 20 + MySQL application. The web process owns HTTP/auth/API boundaries. Long-running browser, narration, audit, and rendering work belongs in worker processes.
 
 ## Security
 - Never log API keys, cookies, storageState, passwords, prompts containing secrets, or provider responses that may contain secrets.

@@ -1,6 +1,6 @@
-# Signal / Zoomcue
+# ZoomCue / Zoomcue
 
-Signal is an AI walkthrough generator: provide a URL and a brief, then the platform explores the page, writes a timed script, generates narration, validates every action, audits camera moves, and renders a shareable walkthrough.
+ZoomCue is an AI walkthrough generator: provide a URL and a brief, then the platform explores the page, writes a timed script, generates narration, validates every action, audits camera moves, and renders a shareable walkthrough.
 
 ## Product preview
 
@@ -99,8 +99,8 @@ COOKIE_SECURE=true
 
 MYSQL_HOST=127.0.0.1
 MYSQL_PORT=3306
-MYSQL_DATABASE=signal
-MYSQL_USER=signal_user
+MYSQL_DATABASE=zoomcue
+MYSQL_USER=zoomcue_user
 MYSQL_PASSWORD=strong-password
 
 REDIS_URL=rediss://...
@@ -109,7 +109,7 @@ CORS_ORIGINS=https://laheef.dev
 R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
 R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
-R2_BUCKET=signal-assets
+R2_BUCKET=zoomcue-assets
 ```
 
 Never commit `.env`. `.env.example` is safe to commit; it contains no live credentials.
@@ -177,7 +177,7 @@ The extension is in `extension/` and uses Manifest V3 without a build step.
 3. Enable **Developer mode**.
 4. Click **Load unpacked**.
 5. Select the repository's `extension/` directory.
-6. Reload the Signal app.
+6. Reload the ZoomCue app.
 
 The extension has two jobs:
 

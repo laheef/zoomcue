@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Signal companion",
+  "name": "ZoomCue companion",
   "version": "0.1.0",
-  "description": "Fetch a faithful page snapshot or hand a safe browser session to Signal.",
+  "description": "Fetch a faithful page snapshot or hand a safe browser session to ZoomCue.",
   "permissions": ["activeTab", "scripting", "storage", "cookies", "downloads"],
   "host_permissions": ["<all_urls>"],
   "background": {"service_worker": "service-worker.js"},
-  "content_scripts": [{"matches": ["http://localhost/*", "https://app.signal.video/*"], "js": ["content.js"], "run_at": "document_start"}],
-  "action": {"default_title": "Signal"}
+  "content_scripts": [{"matches": ["http://localhost/*", "https://app.zoomcue.video/*"], "js": ["content.js"], "run_at": "document_start"}],
+  "action": {"default_title": "ZoomCue"}
 }

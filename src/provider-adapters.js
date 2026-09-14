@@ -1,5 +1,5 @@
 import {withTimeout,retry} from './http.js';
-const call=async(url,options)=>retry(()=>withTimeout(30000,signal=>fetch(url,{...options,signal})),{attempts:3,shouldRetry:e=>e.name==='AbortError'||e.cause?.code==='ECONNRESET'});
+const call=async(url,options)=>retry(()=>withTimeout(30000,zoomcue=>fetch(url,{...options,zoomcue})),{attempts:3,shouldRetry:e=>e.name==='AbortError'||e.cause?.code==='ECONNRESET'});
 export async function synthesize({provider,key,text,voiceId,model}){
  if(provider==='deepgram'){const r=await call(`https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model||'aura-asteria-en')}&encoding=mp3`,{method:'POST',headers:{Authorization:`Token ${key}`,'content-type':'application/json'},body:JSON.stringify({text})});if(!r.ok)throw Error(`deepgram_${r.status}`);return {audio:Buffer.from(await r.arrayBuffer()),words:[],provider};}
  if(provider==='elevenlabs'){const r=await call(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/with-timestamps`,{method:'POST',headers:{'xi-api-key':key,'content-type':'application/json'},body:JSON.stringify({text,model_id:model||'eleven_multilingual_v2'})});if(!r.ok)throw Error(`elevenlabs_${r.status}`);const j=await r.json();return {audio:Buffer.from(j.audio_base64,'base64'),words:decodeElevenWords(j.alignment),provider};}

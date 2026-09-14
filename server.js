@@ -10,7 +10,7 @@ async function providerTest(input){
   const {provider, apiKey, baseUrl, model} = input;
   if(!apiKey) return {ok:false,error:'Enter an API key first.'};
   if(provider==='deepgram'){
-    const r=await fetch('https://api.deepgram.com/v1/speak?model='+encodeURIComponent(input.voiceModel||'aura-asteria-en'),{method:'POST',headers:{Authorization:'Token '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({text:'Signal connection test. Your voice is ready to narrate a walkthrough.'})});
+    const r=await fetch('https://api.deepgram.com/v1/speak?model='+encodeURIComponent(input.voiceModel||'aura-asteria-en'),{method:'POST',headers:{Authorization:'Token '+apiKey,'Content-Type':'application/json'},body:JSON.stringify({text:'ZoomCue connection test. Your voice is ready to narrate a walkthrough.'})});
     return r.ok?{ok:true,message:'Deepgram Aura responded successfully.'}:{ok:false,error:'Deepgram rejected the key ('+r.status+').'};
   }
   if(provider==='elevenlabs'){
@@ -25,7 +25,7 @@ async function providerTest(input){
   return {ok:true,message:'Provider settings saved. A live request will verify them when you generate.'};
 }
 async function tts(input){
-  const text=input.text||'This is a Signal voice preview.';
+  const text=input.text||'This is a ZoomCue voice preview.';
   if(!input.apiKey) return {ok:false,error:'No key supplied. Add a provider key in API keys.'};
   if(input.provider==='deepgram'){
     const r=await fetch('https://api.deepgram.com/v1/speak?model='+encodeURIComponent(input.voiceModel||'aura-asteria-en')+'&encoding=mp3',{method:'POST',headers:{Authorization:'Token '+input.apiKey,'Content-Type':'application/json'},body:JSON.stringify({text})});
@@ -42,4 +42,4 @@ const server=http.createServer(async (req,res)=>{
   if(req.method==='OPTIONS'){res.writeHead(204,{'access-control-allow-origin':'*','access-control-allow-headers':'content-type'});return res.end()}
   try{if(u.pathname==='/api/providers/test'&&req.method==='POST')return json(res,200,await providerTest(await body(req)));if(u.pathname==='/api/tts/preview'&&req.method==='POST')return json(res,200,await tts(await body(req)));}catch(e){return json(res,500,{ok:false,error:e.message})}
   let file=u.pathname==='/'?'index.html':u.pathname.replace(/^\//,''); let p=path.join(root,file); if(!p.startsWith(root)||!fs.existsSync(p)||fs.statSync(p).isDirectory())return json(res,404,{error:'Not found'}); let ext=path.extname(p); let types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json'};res.writeHead(200,{'content-type':types[ext]||'application/octet-stream'});fs.createReadStream(p).pipe(res);
-});server.listen(PORT,'0.0.0.0',()=>console.log('Signal API + preview listening on '+PORT));
+});server.listen(PORT,'0.0.0.0',()=>console.log('ZoomCue API + preview listening on '+PORT));
