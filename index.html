@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal — Narrated walkthroughs</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">✦</div><div><strong>signal</strong><span>Narrated walkthroughs</span></div></div>
+      <button class="new-video active" id="newVideoBtn"><span>＋</span> New video</button>
+      <button class="side-link"><span>✧</span> Ideas <em>3</em></button>
+      <div class="side-label">RECENT VIDEOS</div>
+      <div class="recent-list">
+        <button class="recent"><span class="mini-thumb lavender"></span><span><b>Getting started with Acme</b><small>1:24 · yesterday</small></span></button>
+        <button class="recent"><span class="mini-thumb peach"></span><span><b>API authentication</b><small>Generating...</small></span></button>
+        <button class="recent"><span class="mini-thumb mint"></span><span><b>Dashboard tour</b><small>2:08 · Sep 10</small></span></button>
+      </div>
+      <div class="sidebar-bottom"><button class="side-link"><span>⚙</span> Settings</button><div class="profile"><div class="avatar">AS</div><div><b>Alex Shah</b><small>Personal workspace</small></div><span>⌄</span></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div class="crumb">Videos <span>/</span> New video</div><div class="top-actions"><button class="icon-btn" title="Help">?</button><button class="outline-btn" id="apiKeysBtn">API keys <span class="status-dot"></span></button></div></header>
+      <section id="newView" class="page-view">
+        <div class="page-heading"><div><div class="eyebrow">CREATE A WALKTHROUGH</div><h1>What do you want to show?</h1><p>Give us a page and a direction. Signal will explore it, narrate it, and make the video.</p></div><div class="trust-pill"><span>✦</span> Every step is audited before rendering</div></div>
+        <div class="content-grid">
+          <div class="form-column">
+            <section class="form-card">
+              <div class="section-head"><div><h2>Chrome extension <span class="info">i</span></h2><p>Use your own browser session for pages behind a login or bot check.</p></div><button class="outline-btn" id="extensionBtn">Install extension <span>↗</span></button></div>
+              <div class="extension-note"><span>◈</span><span>Pages you open with the extension stay on your device. Nothing is uploaded until you start a video.</span></div>
+            </section>
+            <section class="form-card">
+              <div class="section-head"><div><h2>What to record</h2><p>We'll explore the page before writing anything.</p></div><span class="stage-num">01</span></div>
+              <label class="field-label">Page URL</label><div class="url-input"><span>◎</span><input id="urlInput" value="https://docs.acme.dev/getting-started" placeholder="https://example.com/docs/getting-started" /></div>
+              <div class="honesty"><span>◌</span><div><b>What the crawler can see</b><p>It cannot see pages drawn on a canvas, anything inside an iframe, hover-only menus, or feeds that load as you scroll. We'll call out anything we couldn't verify.</p></div></div>
+            </section>
+            <section class="form-card">
+              <div class="section-head"><div><h2>Brief</h2><p>Tell the narrator what to cover, in what order, and the tone.</p></div><span class="stage-num">02</span></div>
+              <div class="segmented"><button class="selected" data-mode="write">Write it for me</button><button data-mode="script">I have a script</button></div>
+              <div id="briefArea"><div class="template-row"><span class="field-label">STARTER TEMPLATES</span><button class="chevron" id="showMore">▸ More</button></div><div class="chips" id="chips"></div><textarea id="briefInput" rows="7" placeholder="What to cover, in what order, and the tone. Or pick a starter above."></textarea></div>
+              <div id="scriptArea" class="hidden"><textarea id="scriptInput" rows="9" placeholder="Paste or write the narration, one beat per paragraph."></textarea><div class="inline-hint">You can still edit the beats and point targets before rendering.</div></div>
+            </section>
+            <section class="form-card options-card">
+              <div class="section-head"><div><h2>Voice &amp; timing</h2><p>These choices shape the narration and captions.</p></div><span class="stage-num">03</span></div>
+              <div class="two-col"><div><label class="field-label">Length</label><select id="length"><option>Up to 30 seconds</option><option selected>60 seconds</option><option>2 minutes</option><option>5 minutes</option></select></div><div><label class="field-label">Language</label><select><option>English (US)</option><option>English (UK)</option><option>Spanish</option><option>French</option></select></div></div>
+              <div class="picker-row"><div class="picker-icon voice">◉</div><div class="picker-copy"><label class="field-label">Voice</label><b>Heart <span>· female · American · Free</span></b></div><button class="preview-btn" id="previewVoice">▶ Preview</button><select aria-label="Voice"><option>Heart · female · American · Free</option><option>Aura · neutral · American · Free</option><option>Rachel · female · American · Paid</option></select></div>
+              <div class="picker-row"><div class="picker-icon writer">✦</div><div class="picker-copy"><label class="field-label">Writer</label><b>Gemini Flash <span>· Free</span></b></div><select aria-label="Writer"><option>Gemini Flash · Free</option><option>GPT-OSS 120B · Free</option></select></div>
+              <div class="toggle-row"><div><b>Word captions</b><small>Highlight each word as it is spoken.</small></div><label class="switch"><input type="checkbox" checked><span></span></label></div>
+            </section>
+            <section class="form-card look-card"><button class="look-toggle" id="lookToggle"><div><h2>Look</h2><p id="lookSummary">Aurora · Inset · 16:9 · Normal pointer · Motion blur</p></div><div class="look-preview aurora"><span>✦</span><i>⌄</i></div></button><div id="lookPanel" class="look-panel hidden"><div class="look-group"><label class="field-label">Wallpaper</label><div class="swatches"><button class="swatch aurora active"></button><button class="swatch sunset"></button><button class="swatch ocean"></button><button class="swatch lime"></button><button class="swatch dusk"></button><button class="upload-swatch">＋</button></div></div><div class="two-col"><div><label class="field-label">Frame</label><div class="choice-pills"><button class="selected">Inset</button><button>Full bleed</button></div></div><div><label class="field-label">Shape</label><div class="choice-pills"><button class="selected">Landscape</button><button>Portrait</button></div></div></div><div class="two-col"><div><label class="field-label">Pointer size</label><select><option>Normal</option><option>Small</option><option>Large</option></select></div><div><label class="field-label">Motion blur</label><div class="choice-pills"><button class="selected">On</button><button>Off</button></div></div></div></div></section>
+            <div class="enhancement-row"><span>✦</span><div><b>More ways to make it yours</b><p>Brand kits, music beds, multilingual dubs, and portrait exports are available in your workspace.</p></div><button class="text-btn">Explore enhancements →</button></div>
+          </div>
+          <aside class="summary-column"><div class="summary-card"><div class="summary-top"><span>ESTIMATE</span><span class="free-pill">● Free</span></div><div class="estimate-time">About 5 minutes</div><div class="estimate-copy">We'll explore, write, check, narrate, and render your walkthrough.</div><div class="audit-list"><div><span>01</span><b>Explore target</b><small>Readable page + interactive map</small></div><div><span>02</span><b>Write &amp; dry-run</b><small>Every beat checked before audio</small></div><div><span>03</span><b>Record &amp; render</b><small>Camera moves audited again</small></div></div><button class="create-btn" id="createBtn">Create video <span>→</span></button><p class="fine-print">By creating, you agree to our <u>terms</u>. Free videos are kept for 3 days.</p></div><div class="proof-card"><div class="proof-icon">✓</div><div><b>Proof, not promises</b><p>You'll see the page snapshot, element count, beat checks, cue precision, and a camera audit sheet before download.</p></div></div></aside>
+        </div>
+      </section>
+      <section id="progressView" class="page-view hidden"></section>
+    </main>
+  </div>
+  <div id="modal" class="modal hidden"><div class="modal-backdrop"></div><div class="modal-card" id="modalContent"></div></div>
+  <script src="app.js"></script>
+</body>
+</html>
