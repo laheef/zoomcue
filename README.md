@@ -111,7 +111,7 @@ Required values:
 
 ```env
 NODE_ENV=production
-APP_URL=https://laheef.dev
+APP_URL=https://digital360.store
 PORT=4173
 JWT_SECRET=replace-with-a-long-random-secret
 DATA_ENCRYPTION_KEY=64-hex-characters
@@ -124,7 +124,7 @@ MYSQL_USER=zoomcue_user
 MYSQL_PASSWORD=strong-password
 
 REDIS_URL=rediss://...
-CORS_ORIGINS=https://laheef.dev
+CORS_ORIGINS=https://digital360.store
 
 R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
 R2_ACCESS_KEY_ID=...
@@ -252,12 +252,12 @@ Keep Redis and R2 external if Hostinger does not provide them.
    ```
 
 10. Start the pipeline and render workers as separate persistent applications if the plan supports them.
-11. Point `laheef.dev` DNS to Hostinger and configure HTTPS.
+11. Point `digital360.store` DNS to Hostinger and configure HTTPS.
 12. Set:
 
    ```env
-   APP_URL=https://laheef.dev
-   CORS_ORIGINS=https://laheef.dev
+   APP_URL=https://digital360.store
+   CORS_ORIGINS=https://digital360.store
    COOKIE_SECURE=true
    ```
 
@@ -284,7 +284,7 @@ If Chromium or FFmpeg cannot run on the plan, keep the web/API app on Hostinger 
 - Keep API keys encrypted and never log them.
 - Rotate exposed keys immediately.
 - Use CSRF tokens for cookie-authenticated mutations.
-- Keep CORS limited to `https://laheef.dev`.
+- Keep CORS limited to `https://digital360.store`.
 - Validate and SSRF-check every user-provided URL.
 - Use MySQL transactions for multi-write state transitions.
 - Add indexes before scaling list endpoints.
